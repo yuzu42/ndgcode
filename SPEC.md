@@ -499,14 +499,32 @@ stream_mode = "count"       # "count" | "simple"
 
 ## 9. Milestones
 
+**Status 2026-11-26:** M0–M5 are implemented and tested against the
+simulated board (82 unit tests). What's still open needs the machine: the
+"Done when" checks marked *(hw)* below, the measurements in §8, and
+[docs/hardware-checklist.md](docs/hardware-checklist.md).
+
+Decisions made during implementation:
+
+- `pen_pos_up` defaults to 45 % (S550), because S700 dragged on the low
+  part of the bed.
+- A provisional hard speed cap of 1000 mm/min (`feed_cap_mm_min`).
+- Pen-up moves use `G1` at `speed_penup`, so the cap applies to them too.
+- `options.port` also accepts `file:`, `null:`, `fake:`, a nickname, or a
+  backend object.
+- `ndgcode run` executes unchanged NextDraw scripts, and scripts that import
+  `ndgcode` directly.
+- Plot-context utilities that need a remembered position (`walk_home`,
+  `set_home`) only warn, because each connection resets the board.
+
 | # | Scope | Done when |
 |---|---|---|
-| M0 | Planner + emitter + FileBackend, unit tests (golden G-code) | Square, sine and Hershey text produce the expected `.gcode` |
-| M1 | SerialBackend (streaming, status, errors); measure bed and frame | Square drawn at the right place and orientation |
-| M2 | Full interactive API mirror (§4.1, §4.3, §4.8, §4.9) | `oct-explorations` and `plottext` scripts run unchanged apart from the import |
-| M3 | Comfort: homing strategies, jog, pause/resume, park, `calibrate_pen`, CLI | Session can start, pause, resume and end without manual G-code |
-| M4 | Plot context via Plob: `plot`, `layers`, `cycle`, utilities, `copies` | An SVG with 2 layers plots reordered, layer by layer |
-| M5 | `preview`, estimates, `res_plot`, `report_time`, `webhook` | Paused plot resumes; estimate within ±10 % of real time |
+| M0 | Planner + emitter + FileBackend, unit tests (golden G-code) | Square, sine and Hershey text produce the expected `.gcode` — ✅ |
+| M1 | SerialBackend (streaming, status, errors); measure bed and frame | Square drawn at the right place and orientation — code ✅, *(hw)* pending |
+| M2 | Full interactive API mirror (§4.1, §4.3, §4.8, §4.9) | `oct-explorations` and `plottext` scripts run unchanged apart from the import — ✅ (`test_hershey.py` exports 51 strokes, no edits) |
+| M3 | Comfort: homing strategies, jog, pause/resume, park, `calibrate_pen`, CLI | Session can start, pause, resume and end without manual G-code — code ✅, *(hw)* pending |
+| M4 | Plot context via Plob: `plot`, `layers`, `cycle`, utilities, `copies` | An SVG with 2 layers plots reordered, layer by layer — ✅ (export / simulated board) |
+| M5 | `preview`, estimates, `res_plot`, `report_time`, `webhook` | Paused plot resumes — ✅; estimate within ±10 % of real time — *(hw)* pending |
 
 ## 10. Testing
 

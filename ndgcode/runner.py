@@ -32,14 +32,18 @@ def run_script(path: str, port: Optional[str] = None, overrides: Optional[Dict] 
     shim = types.ModuleType("nextdraw")
     shim.NextDraw = NextDraw
     shim.__ndgcode_shim__ = True
+    import ndgcode
     saved = sys.modules.get("nextdraw")
+    saved_cls = ndgcode.NextDraw
     sys.modules["nextdraw"] = shim
+    ndgcode.NextDraw = NextDraw          # scripts that import ndgcode directly
     old_argv, old_path = sys.argv, list(sys.path)
     sys.argv = [path] + list(argv or [])
     sys.path.insert(0, os.path.dirname(os.path.abspath(path)))
     try:
         runpy.run_path(path, run_name="__main__")
     finally:
+        ndgcode.NextDraw = saved_cls
         sys.argv, sys.path[:] = old_argv, old_path
         if saved is not None:
             sys.modules["nextdraw"] = saved

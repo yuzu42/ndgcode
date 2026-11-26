@@ -428,6 +428,8 @@ class PlotJob:
             nd.time_estimate = nd.time_elapsed if paused_at is None else nd.time_estimate
         if o.report_time:
             self._report()
+        if o.webhook and o.webhook_url and not o.preview:
+            self._webhook()
         svg = self.svg_text
         if svg is not None:
             if paused_at is not None:
@@ -526,6 +528,25 @@ class PlotJob:
                     acc += seg
                 done += acc
         return best
+
+    def _webhook(self) -> None:
+        """POST {value1: document, value2: elapsed, value3: port} as NextDraw does."""
+        import json
+        import urllib.request
+        nd, o = self.nd, self.nd.options
+        port = o.port if isinstance(o.port, str) else ""
+        body = json.dumps({
+            "value1": os.path.basename(self.svg_path) if self.svg_path else "document",
+            "value2": time.strftime("%H:%M:%S", time.gmtime(nd.time_elapsed)),
+            "value3": port or "",
+        }).encode("utf-8")
+        req = urllib.request.Request(str(o.webhook_url), data=body,
+                                     headers={"Content-Type": "application/json"}, method="POST")
+        try:
+            with urllib.request.urlopen(req, timeout=10):
+                pass
+        except Exception as e:   # a failed notification must not fail the plot
+            nd._warn(f"webhook failed: {e}")
 
     def _report(self) -> None:
         nd = self.nd

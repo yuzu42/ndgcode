@@ -151,6 +151,36 @@ class TestPlotContext(unittest.TestCase):
         nd2.options.utility_cmd = "strip_data"
         self.assertNotIn("ndgcode:plotdata", self.run_quiet(nd2, True))
 
+    def test_webhook_posts_json(self):
+        import json
+        import threading
+        from http.server import BaseHTTPRequestHandler, HTTPServer
+        got = {}
+
+        class H(BaseHTTPRequestHandler):
+            def do_POST(self):
+                got.update(json.loads(self.rfile.read(int(self.headers["Content-Length"]))))
+                self.send_response(200)
+                self.end_headers()
+
+            def log_message(self, *a):
+                pass
+
+        srv = HTTPServer(("127.0.0.1", 0), H)
+        th = threading.Thread(target=srv.handle_request, daemon=True)
+        th.start()
+        try:
+            nd, be = self._nd()
+            nd.options.mode = "layers"
+            nd.options.layer = 2
+            nd.options.webhook = True
+            nd.options.webhook_url = f"http://127.0.0.1:{srv.server_port}/"
+            self.run_quiet(nd)
+            th.join(timeout=5)
+        finally:
+            srv.server_close()
+        self.assertEqual(set(got), {"value1", "value2", "value3"})
+
     def test_cycle_on_fake_board(self):
         nd = NextDraw()
         nd.options.port = "fake:"
