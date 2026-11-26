@@ -231,6 +231,14 @@ class Machine:
         self.pen_up = up
         self.dwell(self.st.settle_up_s if up else self.st.settle_down_s)
 
+    def servo(self, s: float, settle: bool = True) -> None:
+        """Set a raw servo value (calibration). The pen counts as up afterwards
+        unless ``s`` is the pen-down value."""
+        self._servo(s)
+        self.pen_up = not math.isclose(round(s), round(self.st.s_down))
+        if settle:
+            self.dwell(self.st.settle_up_s)
+
     def raise_pen(self) -> None:
         self._pen(up=True)
 
