@@ -1,0 +1,22 @@
+# vendor software (proprietary, not redistributable)
+VigoWriter_v2.2_for_writer_control/
+VigoWriter*.zip
+
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+
+# local machine config and outputs
+ndgcode_conf_local.py
+*.gcode
+!tests/data/*.gcode
+out/
+
+# os / editor
+.DS_Store
+.vscode/
+.idea/
