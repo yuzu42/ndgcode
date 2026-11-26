@@ -1,5 +1,7 @@
 # ndgcode
 
+![ndgcode logofile](ndgcode.png)
+
 The [Bantam Tools NextDraw](https://bantam.tools/nd_py) Python API for **GRBL
 G-code pen plotters**, developed on a **VigoTec VG-X4**. Existing NextDraw
 scripts run with one changed import:
