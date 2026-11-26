@@ -134,6 +134,16 @@ class NextDraw:
             from .fakegrbl import factory
             return SerialBackend("fake", transport_factory=factory(), rx_buffer=p.rx_buffer_bytes,
                                  mode=p.stream_mode, banner_timeout=1.0)
+        if isinstance(port, str) and not port.startswith(("/", "COM", "\\\\", "socket:", "rfc2217:")):
+            # a nickname (see write_name): probe the candidate ports for it
+            from .grbl import probe
+            for dev in candidate_ports(p.port_match, p.port_vid):
+                info = probe(dev, p.baud)
+                if info and info.get("nickname") == port:
+                    port = dev
+                    break
+            else:
+                raise errors.ConnectError(f"no plotter with the nickname {port!r} found")
         if port is None:
             ports = candidate_ports(p.port_match, p.port_vid)
             if not ports:
