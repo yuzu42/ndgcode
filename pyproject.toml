@@ -8,6 +8,8 @@ dynamic = ["version"]
 description = "The NextDraw Python API for GRBL G-code pen plotters such as the VigoTec VG-X4"
 readme = "README.md"
 requires-python = ">=3.9"
+license = { file = "LICENSE" }
+classifiers = ["License :: OSI Approved :: MIT License"]
 dependencies = ["pyserial>=3.4"]
 
 [project.optional-dependencies]

@@ -136,5 +136,9 @@ skipped otherwise.
 
 ## License
 
-Not decided yet. NextDraw is a trademark of Bantam Tools; this project is not
-affiliated with Bantam Tools or VigoTec.
+[MIT](LICENSE). This covers ndgcode itself only. The NextDraw Python API
+(needed for SVG plotting) has its own license from Bantam Tools and is not
+included here.
+
+NextDraw is a trademark of Bantam Tools; this project is not affiliated with
+Bantam Tools or VigoTec.
