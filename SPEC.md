@@ -1,4 +1,4 @@
-# penplot-to-gcode — SPEC
+# ndgcode — SPEC
 
 A Python package that keeps the **Bantam Tools NextDraw Python API** as the
 programming interface, but drives a **VigoTec VG-X4** (GRBL G-code plotter)
